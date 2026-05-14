@@ -14,7 +14,7 @@ async function run() {
 
     const command = core.getInput("command");
     const startupOpts = core.getInput("startup-options").split(" ");
-    const generateJobSummary = core.getBooleanInput("generate-job-summary");
+    const generateSummary = core.getBooleanInput("generate-summary");
 
     const helperScript = await matlab.generateScript(workspaceDir, command);
     const execOpts = {
@@ -22,7 +22,7 @@ async function run() {
             ...process.env,
             MW_BATCH_LICENSING_ONLINE: "true", // Remove when online batch licensing is the default
             MW_MATLAB_BUILDTOOL_DEFAULT_PLUGINS_FCN_OVERRIDE: "buildframework.getDefaultPlugins",
-            MW_GENERATE_JOB_SUMMARY: String(generateJobSummary),
+            MW_GENERATE_SUMMARY: String(generateSummary),
         },
     };
     await matlab
@@ -34,7 +34,7 @@ async function run() {
             startupOpts,
         )
         .finally(() => {
-            if (generateJobSummary) {
+            if (generateSummary) {
                 const runnerTemp = process.env.RUNNER_TEMP || "";
                 const runId = process.env.GITHUB_RUN_ID || "";
                 const actionName = process.env.GITHUB_ACTION || "";

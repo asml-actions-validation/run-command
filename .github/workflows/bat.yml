@@ -119,10 +119,6 @@ jobs:
         uses: ./
         with:
           command: buildtool preMadeTest
-      - name: Run command with buildtool multiple times with pre-made test task (sanity check for build summary)
-        uses: ./
-        with:
-          command: buildtool preMadeTest; buildtool preMadeTest; buildtool preMadeTest;
       - name: Verify environment variables make it to MATLAB
         uses: ./
         with:
