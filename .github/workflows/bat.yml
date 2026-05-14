@@ -94,6 +94,14 @@ jobs:
             [~, f] = fileparts(pwd);
             assert(strcmp(f, 'subdir'));
           startup-options: -sd subdir
+      - name: Run command to run tests
+        uses: ./
+        with:
+          command: runtests("sample/TheTruth.m");
+      - name: Run command to run tests (sanity check for test summary)
+        uses: ./
+        with:
+          command: runtests("sample/TheTruth.m"); runtests("sample/TheTruth.m"); runtests("sample/TheTruth.m");
       - name: Create buildfile.m in project root for build and test summary
         shell: bash
         run: |
@@ -111,6 +119,10 @@ jobs:
         uses: ./
         with:
           command: buildtool preMadeTest
+      - name: Run command with buildtool multiple times with pre-made test task (sanity check for build summary)
+        uses: ./
+        with:
+          command: buildtool preMadeTest; buildtool preMadeTest; buildtool preMadeTest;
       - name: Verify environment variables make it to MATLAB
         uses: ./
         with:
