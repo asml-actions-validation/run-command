@@ -14,6 +14,7 @@ async function run() {
 
     const command = core.getInput("command");
     const startupOpts = core.getInput("startup-options").split(" ");
+    const generateSummary = core.getBooleanInput("generate-summary");
 
     const helperScript = await matlab.generateScript(workspaceDir, command);
     const execOpts = {
@@ -21,6 +22,7 @@ async function run() {
             ...process.env,
             MW_BATCH_LICENSING_ONLINE: "true", // Remove when online batch licensing is the default
             MW_MATLAB_BUILDTOOL_DEFAULT_PLUGINS_FCN_OVERRIDE: "buildframework.getDefaultPlugins",
+            MW_INPUT_GENERATE_SUMMARY: String(generateSummary),
         },
     };
     await matlab
@@ -32,12 +34,20 @@ async function run() {
             startupOpts,
         )
         .finally(() => {
-            const runnerTemp = process.env.RUNNER_TEMP || "";
-            const runId = process.env.GITHUB_RUN_ID || "";
+            if (generateSummary) {
+                const runnerTemp = process.env.RUNNER_TEMP || "";
+                const runId = process.env.GITHUB_RUN_ID || "";
+                const actionName = process.env.GITHUB_ACTION || "";
 
-            buildSummary.processAndAddBuildSummary(runnerTemp, runId);
-            testResultsSummary.processAndAddTestSummary(runnerTemp, runId, workspaceDir);
-            core.summary.write();
+                buildSummary.processAndAddBuildSummary(runnerTemp, actionName);
+                testResultsSummary.processAndAddTestSummary(
+                    runnerTemp,
+                    runId,
+                    actionName,
+                    workspaceDir,
+                );
+                core.summary.write();
+            }
         });
 }
 

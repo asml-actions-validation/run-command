@@ -94,6 +94,14 @@ jobs:
             [~, f] = fileparts(pwd);
             assert(strcmp(f, 'subdir'));
           startup-options: -sd subdir
+      - name: Run command to run tests
+        uses: ./
+        with:
+          command: runtests("sample/TheTruth.m");
+      - name: Run command to run tests (sanity check for test summary)
+        uses: ./
+        with:
+          command: runtests("sample/TheTruth.m"); runtests("sample/TheTruth.m"); runtests("sample/TheTruth.m");
       - name: Create buildfile.m in project root for build and test summary
         shell: bash
         run: |
